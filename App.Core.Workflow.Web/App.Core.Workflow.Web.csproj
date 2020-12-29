@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\App.Core\App.Core.Web\App.Core.Web.csproj" />
+    <ProjectReference Include="..\App.Core.Workflow.Business\App.Core.Workflow.Business.csproj" />
+  </ItemGroup>
+
+</Project>
