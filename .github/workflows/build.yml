@@ -1,0 +1,63 @@
+name: .NET Core
+on:
+  push:
+  pull_request:
+  release:
+    types:
+      - published
+env:
+  # Stop wasting time caching packages
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  # Disable sending usage data to Microsoft
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  # Project name to pack and publish
+  PROJECT_NAME: App.Core.Workflow.Web
+  ACTIONS_ALLOW_UNSECURE_COMMANDS: true 
+  # GitHub Packages Feed settings
+  GITHUB_USER: lethanhnam010490@gmail.com
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#   NUGET_URL: ${{ secrets.NUGET_URL }}
+  # Official NuGet Feed settings
+#   NUGET_FEED: https://api.nuget.org/v3/index.json
+#   NUGET_KEY: ${{ secrets.NUGET_KEY }}
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+    steps:
+      - name: Prep
+        run: |      
+          echo "::set-env name=NUGET_URL::https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+         
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.301
+      - name: Ensure GitHub NuGet Source
+        run: |
+            dotnet nuget add source ${{ env.NUGET_URL }} \
+            -n github \
+            -u ${{ env.GITHUB_USER }} \
+            -p ${{ env.GITHUB_TOKEN }} \
+            --store-password-in-clear-text
+      - name: Restore
+        run: dotnet restore
+      - name: Build
+        run: dotnet build -c Release --no-restore
+      - name: Test
+        run: dotnet test -c Release      
+      - name: Upload Artifact
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v2
+        with:
+          name: App
+          path: ./${{ env.PROJECT_NAME }}/bin/Release
+      - name: Cleanup
+        if: always()
+        continue-on-error: true
+        run: |
+            dotnet nuget remove source github
