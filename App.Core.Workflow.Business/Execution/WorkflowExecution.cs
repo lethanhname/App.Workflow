@@ -54,7 +54,7 @@ namespace App.Core.Workflow.Business.Execution
             {
                 action.Invoke(context);
             }
-
+            result.SetAutoTrigger(transition.AutoTrigger?.Invoke(context));
             return result;
         }
 

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using App.Core.Workflow.Contract.Definition;
 using App.Core.Workflow.Contract.Items;
 
 namespace App.Core.Workflow.Contract.Execution
@@ -16,11 +17,19 @@ namespace App.Core.Workflow.Contract.Execution
 
         public string TriggerName { get; private set; }
 
+        public AutoTrigger AutoTrigger { get; private set; }
+
         public bool HasErrors
         {
             get { return Errors != null && Errors.Count() > 0; }
         }
-
+        public bool HasAutoTrigger
+        {
+            get
+            {
+                return this.AutoTrigger != null;
+            }
+        }
         public IEnumerable<string> Errors { get; }
 
         public string CurrentState
@@ -42,6 +51,11 @@ namespace App.Core.Workflow.Contract.Execution
             if (_triggerContext == null) return null;
 
             return _triggerContext.GetVariable<T>(key);
+        }
+
+        public void SetAutoTrigger(AutoTrigger autoTrigger)
+        {
+            this.AutoTrigger = autoTrigger;
         }
     }
 }

@@ -6,6 +6,7 @@ using App.Core.Workflow.Business.Execution;
 using App.Core.Workflow.Contract.Definition;
 using App.Core.Workflow.Contract.Execution;
 using App.Core.Workflow.Contract.Items;
+using App.Core.Workflow.Contract.Scheduler;
 using App.Core.Workflow.Contract.Services;
 using App.CoreLib;
 using App.CoreLib.Common;
@@ -18,16 +19,20 @@ namespace App.Core.Workflow.Business.Services
     public class WorkflowEngineService : IWorkflowEngineService
     {
         private readonly IWorkflowRepository repository;
+
+        private readonly IWorkItemRepository wIRepository;
         private readonly ILogger<WorkflowEngineService> logger;
         private readonly IWorkflowDefinitionProvider workflowDefinitionProvider;
 
         public WorkflowEngineService(
           IWorkflowRepository repository,
+          IWorkItemRepository wIRepository,
           ILogger<WorkflowEngineService> logger,
           IWorkflowDefinitionProvider workflowDefinitionProvider
         )
         {
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            this.wIRepository = wIRepository ?? throw new ArgumentNullException(nameof(repository));
             this.logger = logger;
             this.workflowDefinitionProvider = workflowDefinitionProvider;
         }
@@ -109,13 +114,6 @@ namespace App.Core.Workflow.Business.Services
                 {
                     WorkflowItem workflow = (WorkflowItem)param.Workflow;
                     var execution = this.GetExecution(param.Workflow.WorkflowName);
-                    // var entity = param.Instance as IdentityEntity;
-
-                    // workflow = await this.FindOrCreate(
-                    //   entity.IdentityId,
-                    //   param.Workflow.WorkflowName,
-                    //   param.Workflow.State
-                    // );
 
                     this.EnsureWorkflowVariables(workflow, param);
 
@@ -185,7 +183,6 @@ namespace App.Core.Workflow.Business.Services
         {
             if (workflow == null) throw new ArgumentNullException(nameof(workflow));
 
-            // persisting workflow variables
             if (param.HasVariables)
             {
                 foreach (var v in param.Variables)
@@ -210,11 +207,10 @@ namespace App.Core.Workflow.Business.Services
             workflow.AddHistoryItem(workflow.State, param.Workflow.State, param.Workflow.Assignee, Globals.CurrentUser);
             workflow.State = param.Workflow.State;
 
-            // treating AutoTrigger
-            // if (result.HasAutoTrigger)
-            // {
-            //     this.repository.AddAutoTrigger(result.AutoTrigger, entity);
-            // }
+            if (result.HasAutoTrigger)
+            {
+                this.wIRepository.AddAutoTrigger(result.AutoTrigger, workflow);
+            }
 
             if (await this.WorkflowIsCompleted(param))
             {

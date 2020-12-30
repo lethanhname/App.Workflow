@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using App.Core.Workflow.Contract.Definition;
+using App.Core.Workflow.Contract.Items;
 using App.Core.Workflow.Contract.Scheduler;
 using App.CoreLib;
 using App.CoreLib.EF;
@@ -15,6 +17,19 @@ namespace App.Core.Workflow.Business.Scheduler
         public WorkItemRepository(IStorage context) : base(context)
         {
         }
+
+        public void AddAutoTrigger(AutoTrigger autoTrigger, IWorkflow entity)
+        {
+            var workItem = WorkItem.Create(
+                autoTrigger.Trigger,
+                entity.EntityId,
+                entity.WorkflowName,
+                autoTrigger.DueDate
+            );
+
+            this.DbSet.Add(workItem);
+        }
+
         public async Task PersistWorkItemsAsync(IEnumerable<Contract.Scheduler.WorkItem> items)
         {
             // updates
