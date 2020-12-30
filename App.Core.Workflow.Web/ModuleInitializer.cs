@@ -9,6 +9,10 @@ using App.Core.Workflow.Contract.Items;
 using App.Core.Workflow.Business.Items;
 using App.Core.Workflow.Business.Events;
 using App.CoreLib.EF.Events;
+using App.Core.Workflow.Contract.Services;
+using App.Core.Workflow.Business.Services;
+using App.Core.Workflow.Contract.Definition;
+using App.Core.Workflow.Business.Definition;
 
 namespace App.Core.Workflow.Web
 {
@@ -17,6 +21,10 @@ namespace App.Core.Workflow.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IWorkflowRepository, WorkflowRepository>();
+            services.AddScoped<IWorkflowDefinitionProvider, WorkflowDefinitionProvider>();
+            services.AddScoped<IWorkflowEngineService, WorkflowEngineService>();
+            services.AddScoped<IWorkflowService, WorkflowService>();
+
             services.AddScoped<WorkflowHandler>();
             EventHandlerContainer.Subscribe<AfterSaveEvent, WorkflowHandler>();
         }

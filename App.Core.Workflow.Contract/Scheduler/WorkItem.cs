@@ -17,10 +17,11 @@ namespace App.Core.Workflow.Contract.Scheduler
         public int Retries { get; set; }
 
         public string Error { get; set; }
-
-        public DateTime DueDate { get; set; }
         public int IdentityId { get; set; }
         public int RowVersion { get; set; }
+
+        public DateTime? DueDate { get; set; }
+
 
         public static WorkItem Create(
           string triggerName,
@@ -39,4 +40,5 @@ namespace App.Core.Workflow.Contract.Scheduler
             };
         }
     }
+
 }

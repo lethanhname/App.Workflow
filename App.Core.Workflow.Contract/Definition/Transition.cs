@@ -16,6 +16,8 @@ namespace App.Core.Workflow.Contract.Definition
 
         public List<Action<TransitionContext>> Actions { get; set; }
 
+        public Func<TransitionContext, AutoTrigger> AutoTrigger { get; set; }
+
         public Transition()
         {
             CanMakeTransition = transitionContext => true;
