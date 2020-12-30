@@ -2,9 +2,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using App.Core.Workflow.Contract.Scheduler;
+using App.CoreLib;
 using App.CoreLib.EF;
 using App.CoreLib.EF.Data;
 using App.CoreLib.EF.Data.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace App.Core.Workflow.Business.Scheduler
 {
@@ -38,6 +40,11 @@ namespace App.Core.Workflow.Business.Scheduler
 
             this.Edit(item);
             await this.Storage.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<WorkItem>> ResumeWorkItemsAsync()
+        {
+            return await this.DbSet.Where(p => p.Retries <= WorkItem.WORKITEM_RETRIES && p.DueDate <= Globals.Now()).ToListAsync();
         }
     }
 }

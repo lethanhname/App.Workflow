@@ -63,9 +63,8 @@ namespace App.Core.Workflow.Business.Services
               LogHelper.SerializeObject(param.Workflow)
             );
 
-            var result = param.Instance is IEntity
-              ? await this.TriggerForPersistingInstance(param)
-              : this.TriggerForNonPersistingInstance(param);
+            var result = await this.TriggerForPersistingInstance(param);
+
 
             if (result.IsAborted)
             {
@@ -110,7 +109,7 @@ namespace App.Core.Workflow.Business.Services
                 {
                     WorkflowItem workflow = (WorkflowItem)param.Workflow;
                     var execution = this.GetExecution(param.Workflow.WorkflowName);
-                    var entity = param.Instance as IdentityEntity;
+                    // var entity = param.Instance as IdentityEntity;
 
                     // workflow = await this.FindOrCreate(
                     //   entity.IdentityId,
@@ -229,6 +228,12 @@ namespace App.Core.Workflow.Business.Services
               = await this.GetTriggersAsync(triggerParam.Workflow, triggerParam.Instance, triggerParam.Variables);
 
             return triggerResults.All(r => !r.CanTrigger);
+        }
+
+        public async Task<IWorkflow> FindAsync(int entityId, string workflowName)
+        {
+            var wf = await this.repository.FindAsync(entityId, workflowName);
+            return (IWorkflow)wf;
         }
     }
 }

@@ -19,6 +19,6 @@ namespace App.Core.Workflow.Contract.Services
 
         Task<TriggerResult> TriggerAsync(TriggerParam param);
 
-        // IWorkflow Find(int id, Type type);
+        Task<IWorkflow> FindAsync(int entityId, string workflowName);
     }
 }

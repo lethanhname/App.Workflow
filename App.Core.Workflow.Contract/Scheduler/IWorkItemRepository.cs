@@ -9,5 +9,7 @@ namespace App.Core.Workflow.Contract.Scheduler
         Task PersistWorkItemsAsync(IEnumerable<WorkItem> items);
 
         Task Reschedule(WorkItem model);
+
+        Task<IEnumerable<WorkItem>> ResumeWorkItemsAsync();
     }
 }

@@ -7,7 +7,7 @@ namespace App.Core.Workflow.Contract.Execution
 {
     public class TriggerParam
     {
-        public WorkflowItem Workflow { get; private set; }
+        public IWorkflow Workflow { get; private set; }
         public string TriggerName { get; private set; }
         public IdentityEntity Instance { get; private set; }
         public Dictionary<string, WorkflowVariableBase> Variables { get; private set; }
@@ -20,9 +20,9 @@ namespace App.Core.Workflow.Contract.Execution
         }
 
         public TriggerParam(
-            WorkflowItem workflow,
+            IWorkflow workflow,
           string triggerName,
-          IdentityEntity instance,
+          IdentityEntity instance = null,
           Dictionary<string, WorkflowVariableBase> variables = null)
         {
             Workflow = workflow;

@@ -13,6 +13,7 @@ using App.Core.Workflow.Contract.Services;
 using App.Core.Workflow.Business.Services;
 using App.Core.Workflow.Contract.Definition;
 using App.Core.Workflow.Business.Definition;
+using App.Core.Workflow.Web.Extensions;
 
 namespace App.Core.Workflow.Web
 {
@@ -26,6 +27,8 @@ namespace App.Core.Workflow.Web
             services.AddScoped<IWorkflowService, WorkflowService>();
 
             services.AddScoped<WorkflowHandler>();
+
+            services.AddJobQueueServices();
             EventHandlerContainer.Subscribe<AfterSaveEvent, WorkflowHandler>();
         }
 
